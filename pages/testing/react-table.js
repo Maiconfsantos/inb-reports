@@ -1,4 +1,5 @@
-import { useTable } from 'react-table'
+import { useTable, useFilters } from 'react-table'
+import { useState } from 'react'
 const { corpZabbix } = require('../../lib/api')
 
 import tableStyle from '../../components/table.module.css'
@@ -6,6 +7,32 @@ import containerStyle from '../../components/container.module.css'
 
 export default function Home({hostsTable}) {
 
+    const filterTypes= {
+        text: (rows, id, filterValue) =>{
+            return rows.filter(row =>{
+                const rowValue = row.values[id];
+                return rowValue !== undefined ? String(rowValue).toLowerCase().startsWith(String(filterValue).toLowerCase()) : true;
+            })
+        }
+    }
+
+    const ColumnFilter = ({ column: {filterValue, setFilter, filter}}) =>{
+        return (
+            <input 
+                value = {filterValue || ""}
+                onChange={e =>{
+                    setFilter(e.target.value || undefined);
+                }}
+
+                placeholder={`Search ${filter ? filter : ""}...`}
+            />
+        )
+    }
+
+    const defaultColumn = {
+        Filter: ColumnFilter
+    }
+    
     const data = React.useMemo(
         () => hostsTable,
         []
@@ -37,15 +64,16 @@ export default function Home({hostsTable}) {
         []
     )
 
-    const tableInstance = useTable({ columns, data })
+    const tableInstance = useTable({ columns, data, defaultColumn, filterTypes }, useFilters)
 
     const {
         getTableProps,
         getTableBodyProps,
         headerGroups,
         rows,
-        prepareRow,
+        prepareRow
     } = tableInstance
+
 
     
 
@@ -56,15 +84,37 @@ export default function Home({hostsTable}) {
                 {
                     headerGroups.map(headerGroup =>(
                         <tr {...headerGroup.getHeaderGroupProps()}>
-                            {headerGroup.headers.map(column =>(
-                                <th {...column.getHeaderProps()} className={tableStyle.th}>
-                                    {
-                                        column.render('Header')
-                                    }
-
+                            {headerGroup.headers.map((column, i) => {
+                            // three new addition to column: isSorted, isSortedDesc, getSortByToggleProps
+                            const {
+                                render,
+                                getHeaderProps,
+                                isSorted,
+                                isSortedDesc,
+                                getSortByToggleProps,
+                                // filter,
+                                canFilter
+                            } = column;
+                            const extraClass = isSorted
+                                ? isSortedDesc
+                                ? "desc"
+                                : "asc"
+                                : "";
+                            console.log(render);
+                            return (
+                                <th
+                                key={`th-${i}`}
+                                className={tableStyle.th}
+                                // getHeaderProps now receives a function
+                                >
+                                <div>
+                                    {render("Header")}   
+                                </div>
+                                {/* Render the columns filter UI */}
+                                <div>{canFilter ? render("Filter") : null}</div>
                                 </th>
-                            ))}
-
+                            );
+                            })}
                         </tr> 
                     ))
                 }
