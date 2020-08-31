@@ -4,6 +4,7 @@ const { corpZabbix } = require('../../lib/api')
 
 import tableStyle from '../../components/table.module.css'
 import containerStyle from '../../components/container.module.css'
+import inputStyle from '../../components/input.module.css'
 
 export default function Home({hostsTable}) {
 
@@ -19,6 +20,7 @@ export default function Home({hostsTable}) {
     const ColumnFilter = ({ column: {filterValue, setFilter, filter}}) =>{
         return (
             <input 
+            className={inputStyle.selectSearch}
                 value = {filterValue || ""}
                 onChange={e =>{
                     setFilter(e.target.value || undefined);
@@ -100,7 +102,6 @@ export default function Home({hostsTable}) {
                                 ? "desc"
                                 : "asc"
                                 : "";
-                            console.log(render);
                             return (
                                 <th
                                 key={`th-${i}`}

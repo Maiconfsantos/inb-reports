@@ -1,0 +1,15 @@
+.selectSearch{
+    min-height: 50px;
+    max-width: 80%;
+    min-width: 70%;
+    border-radius: 25px;
+}
+
+.selectSearch:hover{
+    border-color: blue;
+    mask-border-width: 5px;
+}
+
+.selectSearch:focus{
+    outline: none;
+}
