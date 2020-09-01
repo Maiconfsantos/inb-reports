@@ -1,10 +1,14 @@
 import { useTable, useFilters } from 'react-table'
 import { useState } from 'react'
+
 const { corpZabbix } = require('../../lib/api')
+const {exportTable} = require('../../lib/table')
 
 import tableStyle from '../../components/table.module.css'
 import containerStyle from '../../components/container.module.css'
 import inputStyle from '../../components/input.module.css'
+
+import ButtonExport from '../../components/exportTable'
 
 export default function Home({hostsTable}) {
 
@@ -17,7 +21,8 @@ export default function Home({hostsTable}) {
         }
     }
 
-    const ColumnFilter = ({ column: {filterValue, setFilter, filter}}) =>{
+    const ColumnFilter = ({ column: {filterValue, preFilteredRows,setFilter, filter}}) =>{
+        const count = preFilteredRows.length
         return (
             <input 
             className={inputStyle.selectSearch}
@@ -26,7 +31,7 @@ export default function Home({hostsTable}) {
                     setFilter(e.target.value || undefined);
                 }}
 
-                placeholder={`Search ${filter ? filter : ""}...`}
+                placeholder={`Buscar (${count} itens localizados)`}
             />
         )
     }
@@ -81,11 +86,15 @@ export default function Home({hostsTable}) {
 
     return (
         <div className={containerStyle.body}>
-            <table {...getTableBodyProps()} className={tableStyle.table}>
+            <ButtonExport/>
+            <table {...getTableBodyProps()} className={tableStyle.table} id='table'>
             <thead>
                 {
                     headerGroups.map(headerGroup =>(
                         <tr {...headerGroup.getHeaderGroupProps()}>
+                             <th className={tableStyle.th}>
+                                Posição
+                            </th>
                             {headerGroup.headers.map((column, i) => {
                             // three new addition to column: isSorted, isSortedDesc, getSortByToggleProps
                             const {
@@ -112,7 +121,7 @@ export default function Home({hostsTable}) {
                                     {render("Header")}   
                                 </div>
                                 {/* Render the columns filter UI */}
-                                <div>{canFilter ? render("Filter") : null}</div>
+                                <div>{canFilter ? render("Filter") : null}</div>  
                                 </th>
                             );
                             })}
@@ -125,6 +134,9 @@ export default function Home({hostsTable}) {
                     prepareRow(row)
                     return(
                         <tr {...row.getRowProps()} className={tableStyle.tr}>
+                            <td className={tableStyle.td}>
+                                {Number(row.id)+1}
+                            </td>
                             {row.cells.map(cell =>{
                                 return(
                                     <td {...cell.getCellProps()} className={tableStyle.td}>

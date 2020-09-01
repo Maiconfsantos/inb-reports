@@ -7,9 +7,28 @@
 
 .selectSearch:hover{
     border-color: blue;
-    mask-border-width: 5px;
 }
 
 .selectSearch:focus{
+    outline: none;
+}
+
+
+.Input{
+    width: 80%;
+    min-height: 6vh;
+    font-size: 3vh;
+    color: black;
+    border-radius: 25px;
+    padding-left: 3%;
+    position: relative;
+    margin-left: 10%;
+}
+
+.Input:hover{
+    box-shadow:  3px 3px 3px 3px #ccc;
+}
+
+.Input:focus{
     outline: none;
 }

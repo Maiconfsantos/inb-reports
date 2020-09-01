@@ -7,6 +7,7 @@
     font-size: 25px;
     font: bold;
     border: 1px solid black;
+    min-width: 15vh;
 }
 
 .tr{
@@ -17,11 +18,13 @@
 .tr:nth-child(odd) {background: #FFF}
 
 .tr:hover{
-    background: #6aa1ad;
+    background: #424c4d;
+    color: white;
 }
 
 
 .td{
     font-size: 20px;
     border: 1px solid black;
+    text-align: center;
 }
