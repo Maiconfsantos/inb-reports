@@ -12,9 +12,13 @@ import { Row, Col } from 'react-bootstrap'
 
 import { RiLoginCircleFill } from 'react-icons/ri'
 
+import { csrfToken } from 'next-auth/client'
 
 
-export default function logon(){
+
+
+
+export default function logon({ csrfToken }){
 
     return (
         <Container className={containerStyle.loginBody}>
@@ -28,11 +32,12 @@ export default function logon(){
                     nome do sistema
                 </Col>
             </Row>
-            <Form>
+            <Form method='post' action='/api/auth/callback/credentials'>
+            <input name='csrfToken' type='hidden' defaultValue={csrfToken}/>
                 <Row>
                     <Col md={{ span: 6, offset: 3 }}>
                         <Form.Group controlId="formBasicEmail">
-                            <Form.Control type="email" placeholder="Usuário" />
+                            <Form.Control name='username' type="text" placeholder="Usuário" />
                             <Form.Text className="text-muted">
                             </Form.Text>
                         </Form.Group>
@@ -42,7 +47,7 @@ export default function logon(){
                 <Row>
                     <Col md={{ span: 6, offset: 3 }}>
                         <Form.Group controlId="formBasicPassword">
-                            <Form.Control type="password" placeholder="Senha" />
+                            <Form.Control name='password' type="password" placeholder="Senha" />
                         </Form.Group>
                     </Col>
                 </Row>
@@ -58,3 +63,9 @@ export default function logon(){
         </Container>
     )
 }
+
+logon.getInitialProps = async (context) => {
+    return {
+      csrfToken: await csrfToken(context)
+    }
+  }
