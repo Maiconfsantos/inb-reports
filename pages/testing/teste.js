@@ -67,6 +67,10 @@ export default function Home({hostsTable}) {
             Header: 'Tipo de conexão',
             accessor: 'col5',
           },
+          {
+            Header: 'Emails',
+            accessor: 'col6',
+          },
         ],
         []
     )
@@ -158,14 +162,32 @@ export async function getServerSideProps() {
 
     const res = await fetch(corpZabbix.link+'hosts')
     const hosts = await res.json()
+    let emails
+    let email
 
     const hostsTable = hosts.map((host)=>{
+        email = "";
+        emails = host.description.replace(/[.,?!;()"'-]/g, " ")
+        .replace(/\s+/g, " ")
+        .toLowerCase()
+        .split(" ");
+
+        emails.map((word) =>{
+            if(word.indexOf('@') > -1) {
+
+                if (email)
+                    email= email+","+word
+                else email=word
+            }
+        });
+
         return({
             col1: host.host,
             col2: host.description,
             col3: host.interfaces[0].ip,
             col4: host.Iprangedata.city,
-            col5: host.Iprangedata.connection_type
+            col5: host.Iprangedata.connection_type,
+            col6: email
         })
     })
 
